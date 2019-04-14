@@ -6,6 +6,9 @@ Nguồn: [Midium](https://engineering.videoblocks.com/web-architecture-101-a3224
 
 <img class="progressiveMedia-image js-progressiveMedia-image" data-src="https://cdn-images-1.medium.com/max/1600/1*K6M-x-6e39jMq_c-2xqZIQ.png" src="https://cdn-images-1.medium.com/max/1600/1*K6M-x-6e39jMq_c-2xqZIQ.png">
 
+
+![test](https://cdn-images-1.medium.com/max/1600/1*K6M-x-6e39jMq_c-2xqZIQ.png)
+
 *Modern web application architecture overview*
 
 The above diagram is a fairly good representation of our architecture at Storyblocks. If you’re not an experienced web developer, you’ll likely find it complicated. The walk through below should make it more approachable before we dive into the details of each component.
