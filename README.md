@@ -1,63 +1,58 @@
 # Web Architecture 101
 
-Nguồn: [Midium](https://engineering.videoblocks.com/web-architecture-101-a3224e126947)
+Nguồn: [Medium](https://engineering.videoblocks.com/web-architecture-101-a3224e126947)
 
-*The basic architecture concepts I wish I knew when I was getting started as a web developer*
+*Những khái niệm cơ bản về kiến trúc mà tôi ước rằng mình biết khi bắt đầu công việc của một **Web developer***
 
-<img class="progressiveMedia-image js-progressiveMedia-image" data-src="https://cdn-images-1.medium.com/max/1600/1*K6M-x-6e39jMq_c-2xqZIQ.png" src="https://cdn-images-1.medium.com/max/1600/1*K6M-x-6e39jMq_c-2xqZIQ.png">
+<div style="display: flex; justify-content: center"><img class="progressiveMedia-image js-progressiveMedia-image" data-src="https://cdn-images-1.medium.com/max/1600/1*K6M-x-6e39jMq_c-2xqZIQ.png" src="https://cdn-images-1.medium.com/max/1600/1*K6M-x-6e39jMq_c-2xqZIQ.png"></div>
 
+Sơ đồ trên là một đại diện khá tốt về kiến trúc của chúng tôi tại Storyblocks. Nếu bạn không phải là một **web developer** có kinh nghiệm, bạn có thể thấy nó phức tạp. Việc dạo qua bên dưới sẽ làm cho mọi thứ dễ tiếp cận hơn trước khi chúng ta đi sâu vào chi tiết của từng thành phần.
 
-![test](https://cdn-images-1.medium.com/max/1600/1*K6M-x-6e39jMq_c-2xqZIQ.png)
+*Một người dùng tìm kiếm trên Google rằng "Sương mù và tia nắng mạnh mẽ trong rừng". [Kết quả đầu tiên](https://www.storyblocks.com/stock-image/strong-beautiful-fog-and-sunbeams-in-the-forest-bxxg0dvxdzj6gt9ini) là từ Storyblocks, trang web hình ảnh và vectơ hàng đầu của chúng tôi. Người dùng nhấp vào kết quả chuyển hướng trình duyệt của họ đến trang chi tiết hình ảnh. Bên dưới, trình duyệt của người dùng sẽ gửi yêu cầu đến máy chủ DNS để tra cứu cách liên hệ với Storyblocks, sau đó gửi yêu cầu.*
 
-*Modern web application architecture overview*
+*Yêu cầu đánh vào bộ cân bằng tải của chúng tôi, chọn ngẫu nhiên một trong số 10 máy chủ web mà chúng tôi đang chạy trang web tại thời điểm đó để xử lý yêu cầu. Máy chủ web tra cứu một số thông tin về hình ảnh từ dịch vụ lưu trữ của chúng tôi và tìm nạp dữ liệu còn lại về nó từ cơ sở dữ liệu. Chúng tôi nhận thấy rằng cấu hình màu cho hình ảnh chưa được tính toán, vì vậy chúng tôi gửi một hồ sơ màu sắc của công việc trực tiếp đến hàng đợi công việc của chúng tôi, máy chủ công việc của chúng tôi sẽ xử lý không đồng bộ, cập nhật cơ sở dữ liệu phù hợp với kết quả.*
 
-The above diagram is a fairly good representation of our architecture at Storyblocks. If you’re not an experienced web developer, you’ll likely find it complicated. The walk through below should make it more approachable before we dive into the details of each component.
+*Tiếp đến, chúng tôi cố gắng tìm những bức ảnh tương tự bằng cách gửi yêu cầu đến dịch vụ tìm kiếm của chúng tôi bằng cách sử dụng tiêu đề của ảnh làm đầu vào. Người dùng tình cờ đăng nhập vào Storyblocks với tư cách là thành viên để chúng tôi tra cứu thông tin tài khoản của anh ấy từ dịch vụ tài khoản của chúng tôi. Cuối cùng, chúng tôi khởi động một sự kiện xem trang để dữ liệu của chúng tôi được ghi lại trên hệ thống lưu trữ đám mây của chúng tôi và cuối cùng được tải vào kho dữ liệu, nơi các nhà phân tích sử dụng để giúp trả lời các câu hỏi về doanh nghiệp.*
 
-*A user searches on Google for “Strong Beautiful Fog And Sunbeams In The Forest”. The [first result](https://www.storyblocks.com/stock-image/strong-beautiful-fog-and-sunbeams-in-the-forest-bxxg0dvxdzj6gt9ini) happens to be from Storyblocks, our leading stock photo and vectors site. The user clicks the result which redirects their browser to the image details page. Underneath the hood the user’s browser sends a request to a DNS server to lookup how to contact Storyblocks, and then sends the request.*
+*Máy chủ bây giờ hiển thị chế độ xem dưới dạng HTML và gửi lại cho trình duyệt của người dùng, trước tiên chuyển qua bộ cân bằng tải. Trang này chứa các tài sản Javascript và CSS mà chúng tôi tải vào hệ thống lưu trữ đám mây của chúng tôi, được kết nối với CDN của chúng tôi, vì vậy trình duyệt của người dùng liên hệ với CDN để lấy nội dung. Cuối cùng, trình duyệt hiển thị rõ ràng trang cho người dùng xem.*
 
-*The request hits our load balancer, which randomly chooses one of the 10 or so web servers we have running the site at the time to process the request. The web server looks up some information about the image from our caching service and fetches the remaining data about it from the database. We notice that the color profile for the image has not been computed yet, so we send a “color profile” job to our job queue, which our job servers will process asynchronously, updating the database appropriately with the results.*
-
-*Next, we attempt to find similar photos by sending a request to our full text search service using the title of the photo as input. The user happens to be a logged into Storyblocks as a member so we look up his account information from our account service. Finally, we fire off a page view event to our data firehose to be recorded on our cloud storage system and eventually loaded into our data warehouse, which analysts use to help answer questions about the business.*
-
-*The server now renders the view as HTML and sends it back to the user’s browser, passing first through the load balancer. The page contains Javascript and CSS assets that we load into our cloud storage system, which is connected to our CDN, so the user’s browser contacts the CDN to retrieve the content. Lastly, the browser visibly renders the page for the user to see.*
-
-Next I’ll walk you through each component, providing a “101” introduction to each that should give you a good mental model for thinking through web architecture going forward. I’ll follow up with another series of articles providing specific implementation recommendations based on what I’ve learned in my time at Storyblocks.
+Tiếp theo, tôi sẽ hướng dẫn bạn từng thành phần, đưa ra phần giới thiệu về 101 cho mỗi phần sẽ cung cấp cho bạn một mô hình lạc quan tốt để suy nghĩ về kiến trúc web trong tương lai. Tôi sẽ tiếp tục với một loạt bài viết khác cung cấp các khuyến nghị triển khai cụ thể dựa trên những gì tôi đã học được trong thời gian ở Storyblocks.
 
 ## *1. DNS*
 
-DNS stands for “Domain Name System” and it’s a backbone technology that makes the world wide web possible. At the most basic level DNS provides a key/value lookup from a domain name (e.g., google.com) to an IP address (e.g., 85.129.83.120), which is required in order for your computer to route a request to the appropriate server. Analogizing to phone numbers, the difference between a domain name and IP address is the difference between “call John Doe” and “call 201-867–5309.” Just like you needed a phone book to look up John’s number in the old days, you need DNS to look up the IP address for a domain. So you can think of DNS as the phone book for the internet.
+DNS là viết tắt của "Domain Name System" và nó là một công nghệ xương sống giúp cho thế giới web trở nên khả thi. Ở cấp độ cơ bản nhất, DNS cung cấp một khóa / giá trị từ một tên miền (ví dụ: google.com) đến địa chỉ IP (ví dụ: 85.129.83.120), được yêu cầu để máy tính của bạn định tuyến yêu cầu đến máy chủ phù hợp. Tương tự với số điện thoại, sự khác biệt giữa tên miền và địa chỉ IP là sự khác biệt giữa cuộc gọi của John Doe, và cuộc gọi 201-867-5309. Giống như bạn cần một cuốn sách điện thoại để tra cứu số của John trong những ngày xưa, bạn cần DNS để tra cứu địa chỉ IP cho một tên miền. Vì vậy, bạn có thể nghĩ DNS là danh bạ điện thoại cho internet.
 
-There’s a lot more detail we could go into here but we’ll skip over it because it’s not critical for our 101-level intro.
+Có rất nhiều chi tiết khác chúng tôi có thể đi vào đây nhưng chúng tôi sẽ bỏ qua vì nó không quan trọng cho phần giới thiệu 101 cấp của chúng tôi.
 
-## *2. Load Balancer*
+## *2. Load Balancer (Cân bằng tải)*
 
-Before diving into details on load balancing, we need to take a step back to discuss horizontal vs. vertical application scaling. What are they and what’s the difference? Very simply put in [this StackOverflow post](https://stackoverflow.com/questions/11707879/difference-between-scaling-horizontally-and-vertically-for-databases), **horizontal scaling means that you scale by adding more machines into your pool of resources whereas “vertical” scaling means that you scale by adding more power (e.g., CPU, RAM) to an existing machine.**
+Trước khi đi sâu vào chi tiết về cân bằng tải, chúng ta cần lùi lại một bước để thảo luận về tỷ lệ ngang và dọc trên ứng dụng. Chúng là gì và có gì khác biệt? Rất đơn giản trong bài đăng [StackOverflow](https://stackoverflow.com/questions/11707879/difference-between-scaling-horizontally-and-vertically-for-databases) này, **Mở rộng theo chiều ngang có nghĩa là bạn mở rộng bằng cách thêm nhiều máy hơn vào nhóm tài nguyên của mình trong khi quy mô theo *chiều dọc* có nghĩa là bạn mở rộng bằng cách thêm nhiều năng lượng hơn (ví dụ: CPU, RAM) vào máy hiện có.**
 
-In web development, you (almost) always want to scale horizontally because, to keep it simple, stuff breaks. Servers crash randomly. Networks degrade. Entire data centers occasionally go offline. Having more than one server allows you to plan for outages so that your application continues running. In other words, your app is “fault tolerant.” Secondly, horizontal scaling allows you to minimally couple different parts of your application backend (web server, database, service X, etc.) by having each of them run on different servers. Lastly, you may reach a scale where it’s not possible to vertically scale any more. There is no computer in the world big enough to do all your app’s computations. Think Google’s search platform as a quintessential example though this applies to companies at much smaller scales. Storyblocks, for example, runs 150 to 400 AWS EC2 instances at any given point in time. It would be challenging to provide that entire compute power via vertical scaling.
+Trong phát triển web, bạn (hầu như) luôn muốn mở rộng quy mô theo chiều ngang bởi vì, để giữ cho nó đơn giản, công cụ sẽ phá vỡ. Máy chủ gặp sự cố ngẫu nhiên. Mạng suy thoái. Toàn bộ trung tâm dữ liệu thỉnh thoảng ngoại tuyến. Có nhiều hơn một máy chủ cho phép bạn lên kế hoạch ngừng hoạt động để ứng dụng của bạn tiếp tục chạy. Nói cách khác, ứng dụng của bạn có "khả năng chịu lỗi của người dùng". Thứ hai, mở rộng ngang cho phép bạn giảm thiểu tối đa các phần khác nhau của backend ứng dụng (máy chủ web, cơ sở dữ liệu, dịch vụ X, v.v.) bằng cách cho mỗi ứng dụng chạy trên các máy chủ khác nhau. Cuối cùng, bạn có thể đạt đến một tỷ lệ mà nó không thể mở rộng theo chiều dọc nữa. Không có máy tính nào trên thế giới đủ lớn để thực hiện tất cả các tính toán ứng dụng của bạn. Hãy nghĩ rằng nền tảng tìm kiếm Google Google là một ví dụ tinh túy mặc dù điều này áp dụng cho các công ty ở quy mô nhỏ hơn nhiều. Ví dụ, Storyblocks chạy 150 đến 400 phiên bản AWS EC2 tại bất kỳ thời điểm nào. Sẽ rất khó khăn để cung cấp toàn bộ sức mạnh tính toán thông qua tỷ lệ dọc.
 
-Ok, back to load balancers. They’re the magic sauce that makes scaling horizontally possible. They route incoming requests to one of many application servers that are typically clones / mirror images of each other and send the response from the app server back to the client. Any one of them should process the request the same way so it’s just a matter of distributing the requests across the set of servers so none of them are overloaded.
+Ok, trở lại để cân bằng tải. Họ dùng ma thuật để làm cho việc mở rộng theo chiều ngang trở thành có thể. Họ định tuyến các yêu cầu đến tới một trong nhiều máy chủ ứng dụng thường là bản sao / hình ảnh phản chiếu của nhau và gửi phản hồi từ máy chủ ứng dụng trở lại máy khách. Bất kỳ ai trong số họ cũng nên xử lý yêu cầu theo cùng một cách để nó chỉ là vấn đề phân phối các yêu cầu trên toàn bộ máy chủ để không ai trong số họ bị quá tải.
 
-That’s it. Conceptually load balancers are fairly straight forward. Under the hood there are certainly complications but no need to dive in for our 101 version.
+Đó là tất cả. Cân bằng tải về mặt khái niệm là khá thẳng thừng. Bên dưới vỏ bọc chắc chắn có những sự phức tạp nhưng không cần phải đi sâu vào trong phiên bản 101 của chúng tôi.
 
 ## *3. Web Application Servers*
 
-At a high level web application servers are relatively simple to describe. They execute the core business logic that handles a user’s request and sends back HTML to the user’s browser. To do their job, they typically communicate with a variety of backend infrastructure such as databases, caching layers, job queues, search services, other microservices, data/logging queues, and more. As mentioned above, you typically have at least two and often times many more, plugged into a load balancer in order to process user requests.
+Ở cấp độ cao, các máy chủ ứng dụng web tương đối đơn giản để mô tả. Họ thực thi logic nghiệp vụ cốt lõi xử lý yêu cầu của người dùng và gửi lại HTML cho trình duyệt của người dùng. Để thực hiện công việc của mình, họ thường liên lạc với nhiều cơ sở hạ tầng phụ trợ như cơ sở dữ liệu, các lớp bộ đệm, hàng đợi công việc, dịch vụ tìm kiếm, các dịch vụ siêu nhỏ khác, hàng đợi dữ liệu / ghi log, v.v. Như đã đề cập ở trên, bạn thường có ít nhất hai lần và thường xuyên hơn nhiều lần, cắm vào bộ cân bằng tải để xử lý các yêu cầu của người dùng.
 
-You should know that app server implementations require choosing a specific language (Node.js, Ruby, PHP, Scala, Java, C# .NET, etc.) and a web MVC framework for that language (Express for Node.js, Ruby on Rails, Play for Scala, Laravel for PHP, etc.). However, diving into the details of these languages and frameworks is beyond the scope of this article.
+Bạn nên biết rằng việc triển khai máy chủ ứng dụng yêu cầu chọn một ngôn ngữ cụ thể (Node.js, Ruby, PHP, Scala, Java, C # .NET, v.v.) và **web MVC framework** cho ngôn ngữ đó (Express for Node.js, Ruby on Rails , Play cho Scala, Laravel cho PHP, v.v.). Tuy nhiên, đi sâu vào chi tiết của các ngôn ngữ và framework này nằm ngoài phạm vi của bài viết này.
 
 ## *4. Database Servers*
 
-Every modern web application leverages one or more databases to store information. Databases provide ways of defining your data structures, inserting new data, finding existing data, updating or deleting existing data, performing computations across the data, and more. In most cases the web app servers talk directly to one, as will the job servers. Additionally, each backend service may have it’s own database that’s isolated from the rest of the application.
+Mỗi ứng dụng web hiện đại tận dụng một hoặc nhiều cơ sở dữ liệu để lưu trữ thông tin. Cơ sở dữ liệu cung cấp các cách xác định cấu trúc dữ liệu của bạn, chèn dữ liệu mới, tìm dữ liệu hiện có, cập nhật hoặc xóa dữ liệu hiện có, thực hiện tính toán trên dữ liệu và hơn thế nữa. Trong hầu hết các trường hợp, các máy chủ ứng dụng web nói chuyện trực tiếp với một máy chủ, cũng như các máy chủ công việc. Ngoài ra, mỗi backend có thể có cơ sở dữ liệu riêng của mình mà cách ly với phần còn lại của ứng dụng.
 
-While I’m avoiding a deep dive on particular technologies for each architecture component, I’d be doing you a disservice not to mention the next level of detail for databases: SQL and NoSQL.
+Trong khi tôi tránh đi sâu vào các công nghệ cụ thể cho từng thành phần kiến ​​trúc, tôi có thể sẽ làm bạn không hài lòng khi không đề cập chi tiết về cơ sở dữ liệu: SQL và NoSQL.
 
-SQL stands for “Structured Query Language” and was invented in the 1970s to provide a standard way of querying relational data sets that was accessible to a wide audience. SQL databases store data in tables that are linked together via common IDs, typically integers. Let’s walk through a simple example of storing historical address information for users. You might have two tables, users and user_addresses, linked together by the user’s id. See the image below for a simplistic version. The tables are linked because the user_id column in user_addresses is a “foreign key” to the id column in the users table.
+SQL là viết tắt của “Structured Query Language” và được phát minh vào những năm 1970 để cung cấp một cách truy vấn tiêu chuẩn cho các bộ dữ liệu quan hệ có thể truy cập được đối tượng rộng. Cơ sở dữ liệu SQL lưu trữ dữ liệu trong các bảng được liên kết với nhau thông qua các ID chung, điển hình là số nguyên. Hãy xem qua một ví dụ đơn giản về lưu trữ thông tin địa chỉ lịch sử cho người dùng. Bạn có thể có hai bảng, user và user_addresses, được liên kết với nhau bởi id người dùng. Xem hình ảnh dưới đây cho một phiên bản đơn giản. Các bảng được liên kết vì cột user_id trong user_addresses là một khóa ngoại khóa với cột id trong bảng người dùng.
 
-<img class="progressiveMedia-image js-progressiveMedia-image" data-src="https://cdn-images-1.medium.com/max/1600/1*Ln39QPggpJVMAScUBsrcCQ.png" src="https://cdn-images-1.medium.com/max/1600/1*Ln39QPggpJVMAScUBsrcCQ.png">
+<div style="display: flex; justify-content: center"><img class="progressiveMedia-image js-progressiveMedia-image" data-src="https://cdn-images-1.medium.com/max/1600/1*Ln39QPggpJVMAScUBsrcCQ.png" src="https://cdn-images-1.medium.com/max/1600/1*Ln39QPggpJVMAScUBsrcCQ.png"></div>
 
-If you don’t know much about SQL, I highly recommend walking through a tutorial like you can find on Khan Academy [here](https://www.khanacademy.org/computing/computer-programming/sql). It’s ubiquitous in web development so you’ll at least want to know the basics in order to properly architect an application.
+Nếu bạn không biết nhiều về SQL, tôi khuyên bạn nên tìm hiểu hướng dẫn như bạn có thể tìm thấy ở Khan Academy tại [đây](https://www.khanacademy.org/computing/computer-programming/sql). Nó có mặt khắp nơi trong phát triển web, do đó, bạn ít nhất muốn biết những điều cơ bản để thiết kế đúng một ứng dụng.
 
-NoSQL, which stands for “Non-SQL”, is a newer set of database technologies that has emerged to handle the massive amounts of data that can be produced by large scale web applications (most variants of SQL don’t scale horizontally very well and can only scale vertically to a certain point). If you don’t know anything about NoSQL, I recommend starting with some high level introductions like these:
+NoQuery, viết tắt của từ Non-SQL, là một bộ công nghệ cơ sở dữ liệu mới hơn đã xuất hiện để xử lý lượng dữ liệu khổng lồ có thể được tạo ra bởi các ứng dụng web quy mô lớn (hầu hết các biến thể của SQL không có quy mô theo chiều ngang rất tốt và chỉ có thể mở rộng theo chiều dọc đến một điểm nhất định). Nếu bạn không biết gì về NoSQL, tôi khuyên bạn nên bắt đầu với một số giới thiệu đáng giá:
 
 * <https://www.w3resource.com/mongodb/nosql.php>
 
@@ -65,80 +60,80 @@ NoSQL, which stands for “Non-SQL”, is a newer set of database technologies t
 
 * <https://resources.mongodb.com/getting-started-with-mongodb/back-to-basics-1-introduction-to-nosql>
 
-I would also keep in mind that, by and large, [the industry is aligning on SQL as an interface even for NoSQL databases ](https://blog.timescale.com/why-sql-beating-nosql-what-this-means-for-future-of-data-time-series-database-348b777b847a/) so you really should learn SQL if you don’t know it. There’s almost no way to avoid it these days.
+Tôi cũng sẽ ghi nhớ rằng, nhìn chung, [ngành công nghiệp đang liên kết với SQL như một **interface** ngay cả đối với cơ sở dữ liệu NoSQL](https://blog.timescale.com/why-sql-beating-nosql-what-this-means-for-future-of-data-time-series-database-348b777b847a/) vì vậy bạn thực sự nên học SQL, nếu bạn không biết gì về nó. Có rất nhiều cách để tránh nó ngày nay.
 
 ## *5. Caching Service*
 
-A caching service provides a simple key/value data store that makes it possible to save and lookup information in close to O(1) time. Applications typically leverage caching services to save the results of expensive computations so that it’s possible to retrieve the results from the cache instead of recomputing them the next time they’re needed. An application might cache results from a database query, calls to external services, HTML for a given URL, and many more. Here are some examples from real world applications:
+Dịch vụ lưu trữ đệm cung cấp kho lưu trữ dữ liệu khóa / giá trị đơn giản cho phép lưu và tra cứu thông tin gần nhanh đến O(1) lần. Các ứng dụng thường tận dụng các dịch vụ lưu trữ để lưu kết quả của các tính toán đắt tiền để có thể lấy lại kết quả từ bộ đệm thay vì tính toán lại chúng vào lần tiếp theo khi chúng cần. Một ứng dụng có thể lưu trữ kết quả từ truy vấn cơ sở dữ liệu, gọi đến các dịch vụ bên ngoài, HTML cho một URL nhất định và nhiều hơn nữa. Dưới đây là một số ví dụ từ các ứng dụng trong thế giới thực:
 
-* Google caches search results for common search queries like “dog” or “Taylor Swift” rather than re-computing them each time
+* Google lưu trữ kết quả tìm kiếm cho các truy vấn tìm kiếm phổ biến như chú chó ăn trộm hoặc Taylor Swift, thay vì tính lại chúng mỗi lần
 
-* Facebook caches much of the data you see when you log in, such as post data, friends, etc. Read a detailed article on Facebook’s caching tech [here](https://medium.com/@shagun/scaling-memcache-at-facebook-1ba77d71c082).
+* Facebook lưu trữ nhiều dữ liệu bạn nhìn thấy khi đăng nhập, chẳng hạn như dữ liệu bài đăng, bạn bè, v.v. Đọc bài viết chi tiết về công nghệ lưu trữ bộ nhớ cache của Facebook tại [đây](https://medium.com/@shagun/scaling-memcache-at-facebook-1ba77d71c082).
 
-* Storyblocks caches the HTML output from server-side React rendering, search results, typeahead results, and more.
+* Storyblocks lưu trữ đầu ra HTML từ render React phía máy chủ, kết quả tìm kiếm, kết quả đánh máy, v.v.
 
-The two most widespread caching server technologies are Redis and Memcache. I’ll go into more detail here in another post.
+Hai công nghệ máy chủ bộ nhớ đệm phổ biến nhất là Redis và Memcache. Tôi sẽ đi sâu vào chi tiết hơn ở đây trong một bài viết khác.
 
-## *6. Job Queue & Servers*
+## *6. Job Queue & Servers (Hàng đợi và máy chủ)*
 
-Most web applications need to do some work asynchronously behind the scenes that’s not directly associated with responding to a user’s request. For instance, Google needs to crawl and index the entire internet in order to return search results. It does not do this every time you search. Instead, it crawls the web asynchronously, updating the search indexes along the way.
+Hầu hết các ứng dụng web cần thực hiện một số công việc không đồng bộ phía sau hậu trường mà không liên quan trực tiếp đến việc đáp ứng yêu cầu của người dùng. Chẳng hạn, Google cần thu thập dữ liệu và lập chỉ mục toàn bộ internet để trả về kết quả tìm kiếm. Nó không làm điều này mỗi khi bạn tìm kiếm. Thay vào đó, nó thu thập dữ liệu web không đồng bộ, cập nhật các chỉ mục tìm kiếm trên đường đi.
 
-While there are different architectures that enable asynchronous work to be done, the most ubiquitous is what I’ll call the “job queue” architecture. It consists of two components: a queue of “jobs” that need to be run and one or more job servers (often called “workers”) that run the jobs in the queue.
+Mặc dù có các kiến ​​trúc khác nhau cho phép thực hiện công việc không đồng bộ, nhưng phổ biến nhất là thứ mà tôi gọi là “job queue”  của Kiến trúc xếp hàng. Nó bao gồm hai thành phần: một hàng đợi các công việc cần được thực thi, cần được chạy và một hoặc nhiều Sercer (thường được gọi là "workers") chạy các công việc trong hàng đợi.
 
-Job queues store a list of jobs that need to be run asynchronously. The simplest are first-in-first-out (FIFO) queues though most applications end up needing some sort of priority queuing system. Whenever the app needs a job to be run, either on some sort of regular schedule or as determined by user actions, it simply adds the appropriate job to the queue.
+Hàng đợi công việc lưu trữ một danh sách các công việc cần được chạy không đồng bộ. Đơn giản nhất là hàng đợi nhập trước xuất trước (FIFO) mặc dù hầu hết các ứng dụng cuối cùng đều cần một số hệ thống xếp hàng ưu tiên. Bất cứ khi nào ứng dụng cần một công việc để chạy, theo một lịch trình thông thường hoặc được xác định bởi hành động của người dùng, nó chỉ cần thêm công việc phù hợp vào hàng đợi.
 
-Storyblocks, for instance, leverages a job queue to power a lot of the behind-the-scenes work required to support our marketplaces. We run jobs to encode videos and photos, process CSVs for metadata tagging, aggregate user statistics, send password reset emails, and more. We started with a simple FIFO queue though we upgraded to a priority queue to ensure that time-sensitive operations like sending password reset emails were completed ASAP.
+Ví dụ, Storyblocks tận dụng hàng đợi công việc để cung cấp năng lượng cho nhiều công việc hậu trường cần thiết để hỗ trợ thị trường của chúng tôi. Chúng tôi chạy các công việc để mã hóa video và ảnh, xử lý CSV để gắn thẻ siêu dữ liệu, tổng hợp thống kê người dùng, gửi email đặt lại mật khẩu và hơn thế nữa. Chúng tôi đã bắt đầu với một hàng đợi FIFO đơn giản mặc dù chúng tôi đã nâng cấp lên hàng đợi ưu tiên để đảm bảo rằng các hoạt động nhạy cảm với thời gian như gửi email đặt lại mật khẩu đã được hoàn thành càng sớm càng tốt.
 
-Job servers process jobs. They poll the job queue to determine if there’s work to do and if there is, they pop a job off the queue and execute it. The underlying languages and frameworks choices are as numerous as for web servers so I won’t dive into detail in this article.
+**Job servers** xử lý công việc. Nó thăm dò hàng đợi công việc để xác định xem có công việc nào để làm hay không và nếu có, nó sẽ loại bỏ công việc ra khỏi hàng đợi và thực hiện nó. Các lựa chọn ngôn ngữ và framework  cơ bản cũng nhiều như đối với các máy chủ web, vì vậy tôi sẽ không chi tiết trong bài viết này.
 
 ## *7. Full-text Search Service*
 
-Many if not most web apps support some sort of search feature where a user provides a text input (often called a “query”) and the app returns the most “relevant” results. The technology powering this functionality is typically referred to as “[full-text search](https://en.wikipedia.org/wiki/Full-text_search)”, which leverages an [inverted index](https://en.wikipedia.org/wiki/Inverted_index) to quickly look up documents that contain the query keywords.
+Rất nhiều nếu không phải hầu hết các ứng dụng web đều hỗ trợ một số tính năng tìm kiếm trong đó người dùng cung cấp kiểu nhập văn bản (thường được gọi là "query") Công nghệ cung cấp năng lượng cho chức năng này thường được gọi là "[Tìm kiếm toàn văn bản](https://en.wikipedia.org/wiki/Full-text_search)", có thể sử dụng một [chỉ mục đảo ngược](https://en.wikipedia.org/wiki/Inverted_index) để tìm kiếm nhanh các tài liệu có chứa các từ khóa truy vấn.
 
-<img class="progressiveMedia-image js-progressiveMedia-image" data-src="https://cdn-images-1.medium.com/max/1600/1*gun_BpdDH9KrNna1NnaocA.png" src="https://cdn-images-1.medium.com/max/1600/1*gun_BpdDH9KrNna1NnaocA.png">
+<div style="display: flex; justify-content: center"><img class="progressiveMedia-image js-progressiveMedia-image" data-src="https://cdn-images-1.medium.com/max/1600/1*gun_BpdDH9KrNna1NnaocA.png" src="https://cdn-images-1.medium.com/max/1600/1*gun_BpdDH9KrNna1NnaocA.png"></div>
 
 *Example showing how three document titles are converted into an inverted index to facilitate fast lookup from a specific keyword to the documents with that keyword in the title. Note, common words such as “in”, “the”, “with”, etc. (called stop words), are typically not included in an inverted index.*
 
-While it’s possible to do full-text search directly from some databases (e.g., [MySQL supports full-text search](https://dev.mysql.com/doc/refman/5.7/en/fulltext-search.html)), it’s typical to run a separate “search service” that computes and stores the inverted index and provides a query interface. The most popular full-text search platform today is [Elasticsearch](https://www.elastic.co/products/elasticsearch) though there are other options such as [Sphinx](http://sphinxsearch.com/) or [Apache Solr](http://lucene.apache.org/solr/features.html).
+*Ví dụ cho thấy cách ba tiêu đề tài liệu được chuyển đổi thành một chỉ mục đảo ngược để tạo điều kiện tra cứu nhanh từ một từ khóa cụ thể đến các tài liệu có từ khóa đó trong tiêu đề. Lưu ý, các từ phổ biến, chẳng hạn như "in", "the", "with", v.v. (được gọi là các **stop words**), thường không được bao gồm trong một chỉ mục đảo ngược*
+
+Mặc dù nó có thể thực hiện tìm kiếm toàn văn bản trực tiếp từ một số cơ sở dữ liệu (ví dụ: [MySQL hỗ trợ tìm kiếm toàn văn bản](https://dev.mysql.com/doc/refman/5.7/en/fulltext-search.html)), nhưng nó có thể chạy một dịch vụ tìm kiếm riêng biệt, tính toán và lưu trữ chỉ mục đảo ngược và cung cấp giao diện truy vấn. Nền tảng tìm kiếm toàn văn bản phổ biến nhất hiện nay là [Elaticsearch](https://www.elastic.co/products/elasticsearch) mặc dù có các tùy chọn khác như [Sphinx](http://sphinxsearch.com/) hoặc [Apache Solr](http://lucene.apache.org/solr/features.html).
 
 ## *8. Services*
 
-Once an app reaches a certain scale, there will likely be certain “services” that are carved out to run as separate applications. They’re not exposed to the external world but the app and other services interact with them. Storyblocks, for example, has several operational and planned services:
+Khi một ứng dụng đạt đến một quy mô nhất định, có khả năng sẽ có một số **dịch vụ** nhất định được khắc phục để chạy như các ứng dụng riêng biệt. Họ không tiếp xúc với thế giới bên ngoài nhưng ứng dụng và các dịch vụ khác tương tác với họ. Storyblocks, ví dụ, có một số dịch vụ hoạt động và theo kế hoạch:
 
-* **Account service** stores user data across all our sites, which allows us to easily offer cross-sell opportunities and create a more unified user experience
+* **Dịch vụ tài khoản** lưu trữ dữ liệu người dùng trên tất cả các trang web của chúng tôi, cho phép chúng tôi dễ dàng cung cấp các cơ hội bán chéo và tạo trải nghiệm người dùng thống nhất hơn
 
-* **Content service** stores metadata for all of our video, audio, and image content. It also provides interfaces for downloading the content and viewing download history.
+* **Dịch vụ nội dung** lưu trữ siêu dữ liệu cho tất cả nội dung video, âm thanh và hình ảnh của chúng tôi. Nó cũng cung cấp các giao diện để tải xuống nội dung và xem lịch sử tải xuống.
 
-* **Payment service** provides an interface for billing customer credit cards.
+* **Dịch vụ thanh toán** cung cấp một giao diện để thanh toán thẻ tín dụng của khách hàng.
 
-* **HTML → PDF service** provides a simple interface that accepts HTML and returns a corresponding PDF document.
+* **Dịch vụ HTML → PDF** cung cấp giao diện đơn giản chấp nhận HTML và trả về tài liệu PDF tương ứng.
 
 ## *9. Data*
 
-Today, companies live and die based on how well they harness data. Almost every app these days, once it reaches a certain scale, leverages a data pipeline to ensure that data can be collected, stored, and analyzed. A typical pipeline has three main stages:
+Ngày nay, các công ty sống và chết dựa trên mức độ họ khai thác dữ liệu. Hầu như mọi ứng dụng ngày nay, một khi nó đạt đến một quy mô nhất định, tận dụng một **pipeline** dữ liệu để đảm bảo rằng dữ liệu có thể được thu thập, lưu trữ và phân tích. Một **pipeline** điển hình có ba giai đoạn chính:
 
-1. The app sends data, typically events about user interactions, to the data “firehose” which provides a streaming interface to ingest and process the data. Often times the raw data is transformed or augmented and passed to another firehose. AWS Kinesis and Kafka are the two most common technologies for this purpose.
+1. Ứng dụng sẽ gửi dữ liệu, điển hình là các sự kiện về tương tác của người dùng, đến dữ liệu của **firehose**, nơi cung cấp giao diện truyền phát để nhập và xử lý dữ liệu. Thông thường, dữ liệu thô được chuyển đổi hoặc tăng cường và chuyển sang một loại thuốc chữa cháy khác. AWS Kinesis và Kafka là hai công nghệ phổ biến nhất cho mục đích này.
 
-2. The raw data as well as the final transformed/augmented data are saved to cloud storage. AWS Kinesis provides a setting called “firehose” that makes saving the raw data to it’s cloud storage (S3) extremely easy to configure.
+2. Dữ liệu thô cũng như dữ liệu được chuyển đổi / tăng cường cuối cùng được lưu vào bộ nhớ đám mây. AWS Kinesis cung cấp một cài đặt có tên là fire firehose, giúp lưu dữ liệu thô vào bộ lưu trữ đám mây (S3) cực kỳ dễ dàng để cấu hình.
 
-3. The transformed/augmented data is often loaded into a data warehouse for analysis. We use AWS Redshift, as does a large and growing portion of the startup world, though larger companies will often use Oracle or other proprietary warehouse technologies. If the data sets are large enough, a Hadoop-like NoSQL MapReduce technology may be required for analysis.
+3. Dữ liệu được chuyển đổi / tăng cường thường được tải vào kho dữ liệu để phân tích. Chúng tôi sử dụng AWS Redshift, cũng như một phần lớn và đang phát triển của thế giới khởi nghiệp, mặc dù các công ty lớn hơn sẽ thường sử dụng Oracle hoặc các công nghệ kho độc quyền khác. Nếu các bộ dữ liệu đủ lớn, công nghệ NoSQL MapReduce giống như Hadoop có thể được yêu cầu để phân tích.
 
-Another step that’s not pictured in the architecture diagram: loading data from the app and services’ operational databases into the data warehouse. For example at Storyblocks we load our VideoBlocks, AudioBlocks, Storyblocks, account service, and contributor portal databases into Redshift every night. This provides our analysts a holistic dataset by co-locating the core business data alongside our user interaction event data.
+Một bước nữa mà không được hình dung trong sơ đồ kiến ​​trúc: tải dữ liệu từ ứng dụng và dịch vụ cơ sở dữ liệu vận hành vào kho dữ liệu. Ví dụ: tại Storyblocks, chúng tôi tải VideoBlocks, AudioBlocks, Storyblocks, dịch vụ tài khoản và cơ sở dữ liệu cổng thông tin đóng góp vào Redshift mỗi đêm. Điều này cung cấp cho các nhà phân tích của chúng tôi một bộ dữ liệu tổng thể bằng cách định vị dữ liệu kinh doanh cốt lõi cùng với dữ liệu sự kiện tương tác người dùng của chúng tôi.
 
 ## *10. Cloud storage*
 
-“Cloud storage is a simple and scalable way to store, access, and share data over the Internet” [according to AWS](https://aws.amazon.com/what-is-cloud-storage/). You can use it to store and access more or less anything you’d store on a local file system with the benefits of being able to interact with it via a RESTful API over HTTP. Amazon’s S3 offering is by far the most popular cloud storage available today and the one we rely on extensively here at Storyblocks to store our video, photo, and audio assets, our CSS and Javascript, our user event data and much more.
+AWS lưu trữ là một cách đơn giản và có thể mở rộng để lưu trữ, truy cập và chia sẻ dữ liệu qua Internet theo [AWS](https://aws.amazon.com/what-is-cloud-storage/). Bạn có thể sử dụng nó để lưu trữ và truy cập ít nhiều bất cứ thứ gì bạn lưu trữ trên hệ thống tệp cục bộ với lợi ích là có thể tương tác với nó thông qua RESTful API qua HTTP. Cho đến nay, Amazon cung cấp S3 là bộ lưu trữ đám mây phổ biến nhất hiện nay và là nơi chúng tôi dựa vào rộng rãi tại Storyblocks để lưu trữ tài sản video, ảnh và âm thanh, CSS và Javascript, dữ liệu sự kiện người dùng của chúng tôi và nhiều hơn nữa.
 
 ## *11. CDN*
 
-CDN stands for “Content Delivery Network” and the technology provides a way of serving assets such as static HTML, CSS, Javascript, and images over the web much faster than serving them from a single origin server. It works by distributing the content across many “edge” servers around the world so that users end up downloading assets from the “edge” servers instead of the origin server. For instance in the image below, a user in Spain requests a web page from a site with origin servers in NYC, but the static assets for the page are loaded from a CDN “edge” server in England, preventing many slow cross-Atlantic HTTP requests.
+CDN là viết tắt của “Content Delivery Network” và công nghệ cung cấp cách thức phục vụ các tài sản tĩnh như HTML tĩnh, CSS, Javascript và hình ảnh trên web nhanh hơn nhiều so với phục vụ chúng từ một máy chủ gốc. Nó hoạt động bằng cách phân phối nội dung trên nhiều máy chủ của **edge** trên toàn thế giới để người dùng cuối cùng tải xuống các **assets** từ các máy chủ của Edge edge thay vì máy chủ gốc. Ví dụ trong hình ảnh bên dưới, một người dùng ở Tây Ban Nha yêu cầu một trang web từ một trang web có máy chủ gốc ở NYC, nhưng các tài sản tĩnh cho trang được tải từ máy chủ cạnh CDN, ở Anh, ngăn chặn nhiều HTTP chậm Đại Tây Dương yêu cầu.
 
-<img class="progressiveMedia-image js-progressiveMedia-image" data-src="https://cdn-images-1.medium.com/max/1600/1*ZkC_5865Hx-Cgph3iPJghw.png" src="https://cdn-images-1.medium.com/max/1600/1*ZkC_5865Hx-Cgph3iPJghw.png">
+<div style="display: flex; justify-content: center"><img class="progressiveMedia-image js-progressiveMedia-image" data-src="https://cdn-images-1.medium.com/max/1600/1*ZkC_5865Hx-Cgph3iPJghw.png" src="https://cdn-images-1.medium.com/max/1600/1*ZkC_5865Hx-Cgph3iPJghw.png"></div>
 
 *[Source](https://www.creative-artworks.eu/why-use-a-content-delivery-network-cdn/)*
 
-[Check out this article](https://www.creative-artworks.eu/why-use-a-content-delivery-network-cdn/) for a more thorough introduction. In general a web app should always use a CDN to serve CSS, Javascript, images, videos and any other assets. Some apps might also be able to leverage a CDN to serve static HTML pages.
+## Kết thúc
 
-## Parting thoughts
-
-And that’s a wrap on Web Architecture 101. I hope you found this useful. I’ll hopefully post a series of 201 articles that provide deep dives into some of these components over the course of the next year or two.
+Và đó là một gói trên Kiến trúc Web 101. Tôi hy vọng bạn thấy điều này hữu ích và hy vọng sẽ đăng một loạt 201 bài viết cung cấp các bài đi sâu vào một số thành phần này trong suốt một hoặc hai năm tới.
